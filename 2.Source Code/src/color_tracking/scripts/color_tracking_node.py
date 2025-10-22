@@ -155,7 +155,6 @@ def run(msg):
                     bus_servo_control.set_servos(joints_pub, 0.02, (
                         (3, servo_data['servo3']), (4, servo_data['servo4']), (5, servo_data['servo5']), (6, x_dis)))
 
-
 result_sub = None
 heartbeat_timer = None
 # APP enter服务回调函数
