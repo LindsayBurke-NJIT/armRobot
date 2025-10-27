@@ -15,17 +15,17 @@ def stop():
     
 def drive_robot(velocity: int, angle: float, turn_rate: int, time: int):
     '''
-    velocity: int in range -100 to 100 (mm/s)
+    velocity: int in range -100 to 100 (in units of mm/s)
         - Negative values makes the motor rotate counter-clockwise
-    angle: int in range 0 to 360 degrees
+    angle: int in range 0 to 360 (in units of degrees)
         - 0 degrees means go right
         - 90 degrees means go forward
         - 180 degrees means go left
         - 270 degrees means go backwards
-    turn_rate: int in range -2 to 2
-        - How fast to yaw (in units of 5 degrees/second)
+    turn_rate: int in range -2 to 2 (in units of 5 degrees/second)
+        - How fast to yaw
         - Negative rotates clockwise)
-    time: int
+    time: int (in units of seconds)
         - Time to drive for
     '''
     rospy.init_node('car_forward_demo', log_level=rospy.DEBUG)
