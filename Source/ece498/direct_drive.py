@@ -16,7 +16,7 @@ class MecanumChassis:
         # Initialize motor controller type
         with smbus2.SMBus(self.i2c_port) as bus:
             # Set motor type to 3
-            bus.write_i2c_block_data(ENCODER_MOTOR_MODULE_ADDRESS, 20, [3])
+            bus.write_i2c_block_data(ENCODER_MOTOR_MODULE_ADDRESS, 51, [3,])
 
     def set_motor_speeds(self, speeds):
         """Set the speeds for all motors
@@ -26,7 +26,7 @@ class MecanumChassis:
         with smbus2.SMBus(self.i2c_port) as bus:
             try:
                 # Send all motor speeds at once
-                bus.write_i2c_block_data(ENCODER_MOTOR_MODULE_ADDRESS, 51, speeds)
+                bus.write_i2c_block_data(ENCODER_MOTOR_MODULE_ADDRESS, 51, speeds) #set speeds to [3,] for all motors one by one (change speeds to [1,2,3,4])
             except Exception as e:
                 print(f"Error setting motor speeds: {e}")
 
@@ -56,6 +56,7 @@ class MecanumChassis:
             self.stop_motors()
 
 def main():
+    i2cPort = 1
     chassis = MecanumChassis()
     try:
         # Drive forward at 60mm/s for 2 seconds
@@ -64,6 +65,8 @@ def main():
         print("\nStopping due to keyboard interrupt...")
     finally:
         chassis.stop_motors()
+        with smbus2.SMBus(1) as bus:
+            bus.close()
         print("Motors stopped")
 
 if __name__ == '__main__':
