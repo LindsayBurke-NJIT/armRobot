@@ -4,6 +4,9 @@ import time
 import smbus2
 import math
 
+from servo_tool.ros_robot_controller_sdk import *
+from servo_tool.servo_controller import *
+
 # Motor controller I2C address
 ENCODER_MOTOR_MODULE_ADDRESS = 0x34
 
@@ -60,15 +63,34 @@ class Robot:
         finally:
             print("Stopping...")
             self.stop_motors()
+
 def main():
     i2cPort = 1
     robot = Robot()
+
     try:
-        robot.drive(50, 90, 2)
+        #setServoPulse(1, 0, 0)
+        
+
+        #board = Board()
+        #board.enable_reception()
+        #board.get_battery()
+        #bus_servo_test(board)
+        time.sleep(1)
+    except Exception as e:
+        print(f"Stopping servos: {e}")
+    finally:
+        robot.stop_motors()
+        with smbus2.SMBus(i2cPort) as bus:
+            bus.close()
+
+    try:
+        #robot.drive(50, 90, .1)
+        time.sleep(1)
     except KeyboardInterrupt:
         print("\nStopping due to keyboard interrupt...")
     finally:
-        chassis.stop_motors()
+        robot.stop_motors()
         with smbus2.SMBus(i2cPort) as bus:
             bus.close()
         print("Motors stopped")
