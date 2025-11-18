@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python4
 # coding=utf8
 import time
 import smbus2
@@ -71,7 +71,9 @@ def main():
     try:
         #setServoPulse(1, 0, 0)
         
-
+        #setServoAngleLimit(1, 0, 10)
+        setServoPulse(1, 100, 10)
+        
         #board = Board()
         #board.enable_reception()
         #board.get_battery()
