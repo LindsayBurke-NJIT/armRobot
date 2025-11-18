@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import time
-from servo_tool.ros_robot_controller_sdk import *
+from ros_robot_controller_sdk import *
 
 if sys.version_info.major == 2:
     print('Please run this program with python3!')

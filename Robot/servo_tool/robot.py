@@ -1,0 +1,105 @@
+#!/usr/bin/python4
+# coding=utf8
+import time
+import smbus2
+import math
+
+from ros_robot_controller_sdk import *
+from servo_controller import *
+from bus_servo_control import *
+
+# Motor controller I2C address
+ENCODER_MOTOR_MODULE_ADDRESS = 0x34
+
+class Robot:
+    def __init__(self, i2c_port=1, receiverBlock=51):
+        """Initialize the mecanum wheel chassis controller
+        Args:
+            i2c_port (int): The I2C port number (default is 1)
+        """
+        self.i2c_port = i2c_port
+        self.receiverBlock = receiverBlock
+        # Initialize motor controller type
+        with smbus2.SMBus(self.i2c_port) as bus:
+            # Set motor type to 3
+            bus.write_i2c_block_data(ENCODER_MOTOR_MODULE_ADDRESS, receiverBlock, [3,])
+
+    def set_motor_speeds(self, speeds):
+        """Set the speeds for all motors
+        Args:
+            speeds (list): List of 4 speed values (-100 to 100) for motors 1-4
+        """
+        with smbus2.SMBus(self.i2c_port) as bus:
+            try:
+                # Send all motor speeds at once
+                bus.write_i2c_block_data(ENCODER_MOTOR_MODULE_ADDRESS, self.receiverBlock, speeds) #set speeds to [3,] for all motors one by one (change speeds to [1,2,3,4])
+            except Exception as e:
+                print(f"Error setting motor speeds: {e}")
+
+    def stop_motors(self):
+        """Stop all motors"""
+        self.set_motor_speeds([0, 0, 0, 0])
+
+    def drive(self, speed=100, angle=0, duration=2):
+        """Drive the robot forward
+        Args:
+            speed (int): Speed in range -100 to 100 mm/s (default 60)
+            angle (int): Angle at which to drive the robot (0 to 359 -> 0 is right, 180 is back, 270 is left)
+            duration (int): How long to drive in seconds (default 2)
+        """
+        if not -100 <= speed <= 100:
+            raise ValueError("Speed must be between -100 and 100")
+        radians = angle*(math.pi/180.)
+
+        frontLeftSpeed = int(math.cos(radians)*speed+math.sin(radians)*speed)
+        frontRightSpeed = int(-1*math.cos(radians)*speed+math.sin(radians)*speed)
+        backLeftSpeed = int(-1*math.cos(radians)*speed+math.sin(radians)*speed)
+        backRightSpeed = int(math.cos(radians)*speed + math.sin(radians)*speed)
+        speeds = [frontLeftSpeed, frontRightSpeed, backLeftSpeed, backRightSpeed]
+        
+        try:
+            print(f"Driving on {angle} degree angle at speed {speed} for {duration} seconds...")
+            self.set_motor_speeds(speeds)
+            time.sleep(duration)
+        finally:
+            print("Stopping...")
+            self.stop_motors()
+
+def main():
+    i2cPort = 1
+    robot = Robot()
+
+    try:
+        board = Board()
+        board.enable_reception()
+        bus_servo_test(board)
+
+        #busService = BusServoControl(board)
+        #busService.setBusServoPulse(1, 10, 0)
+        #setServoAngleLimit(1, 0, 10)
+        
+        #board = Board()
+        #board.enable_reception()
+        #board.get_battery()
+        #bus_servo_test(board)
+        time.sleep(1)
+    except Exception as e:
+        print(f"ERROR: Stopping servos: {e}")
+    finally:
+        print(f"Stopping servos.")
+        with smbus2.SMBus(i2cPort) as bus:
+            bus.close()
+
+    try:
+        #robot.drive(50, 90, .1)
+        time.sleep(1)
+    except KeyboardInterrupt:
+        print("\nStopping due to keyboard interrupt...")
+    finally:
+        robot.stop_motors()
+        with smbus2.SMBus(i2cPort) as bus:
+            bus.close()
+        print("Motors stopped")
+
+if __name__ == '__main__':
+    main()

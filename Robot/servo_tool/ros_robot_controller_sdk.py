@@ -379,10 +379,7 @@ class Board:
                         break
             if data is not None:
                 servo_id, cmd, info = struct.unpack(unpack, data)
-                if success == 0:
-                    return info
-                else:
-                    return None
+                return info
             else:
                 return None
 
@@ -594,7 +591,7 @@ def bus_servo_test(board):
 
 def pwm_servo_test(board):
     servo_id = 1
-    board.pwm_servo_set_position(0.5, [[servo_id, 1500]])
+    board.pwm_servo_set_position(0.5, [[servo_id, 500]])
     board.pwm_servo_set_offset(servo_id, 0)
     print('offset:', board.pwm_servo_read_offset(servo_id))
     print('position:', board.pwm_servo_read_position(servo_id))
@@ -603,16 +600,17 @@ if __name__ == "__main__":
     board = Board()
     board.enable_reception()
     print("START...")
-    # board.set_led(0.1, 0.9, 1)
-    # board.set_buzzer(2400, 0.1, 0.9, 1)
-    # board.set_motor_speed([[1, -0.3], [2, 0.3], [3, -0.3], [4, 0.3]])
-    # time.sleep(1)
-    # board.set_rgb([[1, 0, 0, 255]])
-    # board.set_motor_speed([[1, 0], [2, 0], [3, 0], [4, 0]])
-    # bus_servo_test(board)
-    # pwm_servo_test(board)
-    # board.set_oled_text(1, "SSID:HW-ABC123")
-    # board.set_oled_text(2, "IP:192.168.149.1")
+    board.set_led(0.1, 0.9, 1)
+    #board.set_buzzer(2400, 0.1, 0.9, 1)
+    board.set_motor_speed([[1, -.3], [2, .3], [3, -.3], [4, .3]])
+    time.sleep(1)
+    #board.set_rgb([[1, 0, 0, 255]])
+    #board.set_motor_speed([[1, 0], [2, 0], [3, 0], [4, 0]])
+    bus_servo_test(board)
+    #board.set_oled_text(1, "SSID:HW-ABC123")
+    #board.set_oled_text(2, "IP:192.168.149.1")
+    
+   # pwm_servo_test(board)
     while True:
         try:
             # res = board.get_imu()
@@ -629,8 +627,8 @@ if __name__ == "__main__":
             # if res is not None:
                 # print(res)
             res = board.get_battery()
-            if res is not None:
-                print(res)
+            #if res is not None:
+                #print(res)
             time.sleep(0.001)
         except KeyboardInterrupt:
             break

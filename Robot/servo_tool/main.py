@@ -2,7 +2,6 @@
 # encoding: utf-8
 import os
 import re
-import cv2
 import sys
 import copy
 import math
@@ -29,7 +28,7 @@ class MainWindow(QtWidgets.QWidget, Ui_Form):
 
         self.radioButton_zn.toggled.connect(lambda: self.language(self.radioButton_zn))
         self.radioButton_en.toggled.connect(lambda: self.language(self.radioButton_en))        
-        self.chinese = True
+        self.chinese = False
         try:
             if os.environ['ASR_LANGUAGE'] == 'Chinese':
                 self.radioButton_zn.setChecked(True)

@@ -1,9 +1,9 @@
 import threading, os, time
-from servo_tool.ros_robot_controller_sdk import Board
-from servo_tool.bus_servo_control import BusServoControl
+from ros_robot_controller_sdk import Board
+from bus_servo_control import BusServoControl
 
 board = Board()
-# board.enable_reception()
+board.enable_reception()
 
 bsc = BusServoControl(board)
 
